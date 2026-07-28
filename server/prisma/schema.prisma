@@ -55,14 +55,16 @@ model Customer {
 }
 
 model Policy {
-  id             Int      @id @default(autoincrement())
-  customerId     Int
-  policyType     String
-  policyNumber   String   @unique
-  premiumAmount  Float
-  startDate      DateTime
-  endDate        DateTime
-  status         PolicyStatus
+  id               Int           @id @default(autoincrement())
+  customerId       Int
+  policyType       String
+  policyNumber     String        @unique
+  premiumAmount    Float
+  startDate        DateTime
+  endDate          DateTime
+  status           PolicyStatus
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
   customer         Customer         @relation(fields: [customerId], references: [id])
   claims           Claim[]

@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  AGENT
+  CUSTOMER
+}
+
+enum PolicyStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+enum ClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  OVERDUE
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  customer Customer?
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  dob       DateTime
+  phone     String
+  address   String
+
+  user       User               @relation(fields: [userId], references: [id])
+  policies   Policy[]
+  documents  Document[]
+}
+
+model Policy {
+  id             Int      @id @default(autoincrement())
+  customerId     Int
+  policyType     String
+  policyNumber   String   @unique
+  premiumAmount  Float
+  startDate      DateTime
+  endDate        DateTime
+  status         PolicyStatus
+
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  claims           Claim[]
+  premiumPayments  PremiumPayment[]
+}
+
+model Claim {
+  id              Int         @id @default(autoincrement())
+  policyId        Int
+  claimAmount     Float
+  reason          String
+  status          ClaimStatus
+  submissionDate  DateTime    @default(now())
+
+  policy Policy @relation(fields: [policyId], references: [id])
+}
+
+model PremiumPayment {
+  id             Int           @id @default(autoincrement())
+  policyId       Int
+  paymentDate    DateTime
+  amount         Float
+  paymentStatus  PaymentStatus
+
+  policy Policy @relation(fields: [policyId], references: [id])
+}
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  customerId  Int
+  fileName    String
+  filePath    String
+  uploadedAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id])
+}

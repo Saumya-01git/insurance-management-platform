@@ -72,12 +72,12 @@ model Policy {
 }
 
 model Claim {
-  id              Int         @id @default(autoincrement())
-  policyId        Int
-  claimAmount     Float
-  reason          String
-  status          ClaimStatus
-  submissionDate  DateTime    @default(now())
+  id             Int         @id @default(autoincrement())
+  policyId       Int
+  claimAmount    Float
+  reason         String
+  status         ClaimStatus
+  submissionDate DateTime    @default(now())
 
   policy Policy @relation(fields: [policyId], references: [id])
 }

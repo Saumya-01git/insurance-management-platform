@@ -83,11 +83,15 @@ model Claim {
 }
 
 model PremiumPayment {
-  id             Int           @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   policyId       Int
   paymentDate    DateTime
+  dueDate        DateTime
   amount         Float
   paymentStatus  PaymentStatus
+
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   policy Policy @relation(fields: [policyId], references: [id])
 }

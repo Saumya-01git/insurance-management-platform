@@ -19,6 +19,12 @@ const {
     authorize
 } = require("../middleware/authMiddleware");
 
+const {
+    documentValidation
+} = require("../validators/documentValidator");
+
+const validate = require("../middleware/validationMiddleware");
+
 router.get(
     "/",
     protect,
@@ -52,6 +58,8 @@ router.post(
     protect,
     authorize("ADMIN"),
     upload.single("document"),
+    documentValidation,
+    validate,
     uploadDocument
 );
 

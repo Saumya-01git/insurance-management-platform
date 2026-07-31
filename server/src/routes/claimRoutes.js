@@ -17,10 +17,18 @@ const {
 
 const { protect, authorize } = require("../middleware/authMiddleware");
 
+const {
+    claimValidation
+} = require("../validators/claimValidator");
+
+const validate = require("../middleware/validationMiddleware");
+
 router.post(
     "/",
     protect,
-    authorize("ADMIN", "AGENT"),
+    authorize("ADMIN"),
+    claimValidation,
+    validate,
     createClaim
 );
 

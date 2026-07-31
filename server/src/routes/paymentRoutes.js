@@ -20,11 +20,18 @@ const {
     authorize
 } = require("../middleware/authMiddleware");
 
+const {
+    paymentValidation
+} = require("../validators/paymentValidator");
+
+const validate = require("../middleware/validationMiddleware");
 
 router.post(
     "/",
     protect,
-    authorize("ADMIN", "AGENT"),
+    authorize("ADMIN"),
+    paymentValidation,
+    validate,
     createPayment
 );
 

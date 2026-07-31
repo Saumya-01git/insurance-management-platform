@@ -11,9 +11,26 @@ const {
     authorize
 } = require("../middleware/authMiddleware");
 
-router.post("/register", register);
+const {
+    registerValidation,
+    loginValidation
+} = require("../validators/authValidator");
 
-router.post("/login", login);
+const validate = require("../middleware/validationMiddleware");
+
+router.post(
+    "/register",
+    registerValidation,
+    validate,
+    register
+);
+
+router.post(
+    "/login",
+    loginValidation,
+    validate,
+    login
+);
 
 router.get(
     "/admin",

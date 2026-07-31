@@ -10,10 +10,28 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const claimRoutes = require("./routes/claimRoutes");
 const documentRoutes = require("./routes/documentRoutes");
 const reportRoutes = require("./routes/reportRoutes");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const morgan = require("morgan");
+
+const limiter = rateLimit({
+
+    windowMs: 15 * 60 * 1000,
+
+    max: 100,
+
+    message: {
+        message: "Too many requests. Please try again after 15 minutes."
+    }
+
+});
 
 const app = express();
 
 app.use(cors());
+app.use(helmet());
+app.use(limiter);
+app.use(morgan("dev"));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 

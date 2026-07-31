@@ -19,10 +19,18 @@ const {
     authorize
 } = require("../middleware/authMiddleware");
 
+const {
+    policyValidation
+} = require("../validators/policyValidator");
+
+const validate = require("../middleware/validationMiddleware");
+
 router.post(
     "/",
     protect,
-    authorize("ADMIN", "AGENT"),
+    authorize("ADMIN"),
+    policyValidation,
+    validate,
     createPolicy
 );
 

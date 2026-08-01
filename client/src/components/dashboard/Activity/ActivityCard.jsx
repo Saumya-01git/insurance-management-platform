@@ -1,4 +1,9 @@
 const ActivityCard = ({ title, user, action, time, icon: Icon, color = "blue" }) => {
+  const userName =
+    typeof user === "object"
+      ? user?.fullName || user?.name || user?.user?.fullName || user?.email || "Carrier Agent"
+      : user || "Carrier Agent";
+
   return (
     <div className="flex items-start gap-3.5 relative pb-4 last:pb-0 group">
       {/* Connector Line */}
@@ -11,7 +16,7 @@ const ActivityCard = ({ title, user, action, time, icon: Icon, color = "blue" })
       <div className="space-y-0.5 flex-1 min-w-0">
         <div className="flex items-center justify-between text-xs">
           <span className="font-extrabold text-slate-900 dark:text-white truncate">
-            {user}
+            {userName}
           </span>
           <span className="text-[10px] font-semibold text-slate-400 shrink-0">
             {time}

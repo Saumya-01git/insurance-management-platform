@@ -1,0 +1,51 @@
+import { AlertTriangle, Trash2, X } from "lucide-react";
+import { formatPolicyNumber } from "../../utils/policyHelpers";
+
+const DeletePolicyModal = ({ isOpen, onClose, onConfirm, policy }) => {
+  if (!isOpen || !policy) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="w-full max-w-md rounded-3xl bg-white dark:bg-[#0C1424] border border-slate-200/80 dark:border-white/10 shadow-2xl overflow-hidden p-6 space-y-5">
+        <div className="flex items-center justify-between">
+          <div className="w-11 h-11 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-200 dark:border-rose-900/30 shrink-0">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          <h3 className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Cancel & Delete Policy?
+          </h3>
+          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Are you sure you want to terminate <span className="font-mono text-[#2563EB] dark:text-cyan-400 font-extrabold">{formatPolicyNumber(policy.policyNumber || policy.id)}</span> ({policy.policyType}) for customer <strong className="text-slate-900 dark:text-white">{policy.customer}</strong>?
+          </p>
+        </div>
+
+        <div className="flex items-center justify-end gap-3 pt-2">
+          <button
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-600/30 transition-all cursor-pointer flex items-center gap-2"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>Confirm Delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DeletePolicyModal;

@@ -6,6 +6,7 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 
 // Protected Route Guard
 import ProtectedRoute from "./ProtectedRoute";
+import ErrorBoundary from "../components/common/ErrorBoundary";
 
 // Pages
 import LoginPage from "../pages/auth/LoginPage";
@@ -23,35 +24,37 @@ import NotFoundPage from "../pages/common/NotFoundPage";
 function AppRoutes() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public / Auth Routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Route>
+      <ErrorBoundary>
+        <Routes>
+          {/* Public / Auth Routes */}
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
 
-        {/* Protected Dashboard Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<DashboardLayout />}>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/customers" element={<CustomersPage />} />
-            <Route path="/policies" element={<PoliciesPage />} />
-            <Route path="/claims" element={<ClaimsPage />} />
-            <Route path="/payments" element={<PaymentsPage />} />
-            <Route path="/documents" element={<DocumentsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+          {/* Protected Dashboard Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<DashboardLayout />}>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/customers" element={<CustomersPage />} />
+              <Route path="/policies" element={<PoliciesPage />} />
+              <Route path="/claims" element={<ClaimsPage />} />
+              <Route path="/payments" element={<PaymentsPage />} />
+              <Route path="/documents" element={<DocumentsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
 
-            {/* Admin Only Protected Route */}
-            <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
-              <Route path="/reports" element={<ReportsPage />} />
+              {/* Admin Only Protected Route */}
+              <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+                <Route path="/reports" element={<ReportsPage />} />
+              </Route>
             </Route>
           </Route>
-        </Route>
 
-        {/* 404 Route */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+          {/* 404 Route */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

@@ -2,7 +2,7 @@ const prisma = require("../config/prisma");
 const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
 
-const register = async (req, res) => {
+const register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body;
 
@@ -11,7 +11,7 @@ const register = async (req, res) => {
                 message: "Please fill all fields"
             });
         }
-
+        
         const existingUser = await prisma.user.findUnique({
             where: {
                 email
@@ -25,7 +25,7 @@ const register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        
         const user = await prisma.user.create({
             data: {
                 name,
@@ -44,15 +44,13 @@ res.status(201).json({
 });
 
     } catch (error) {
-        console.log(error);
 
-        res.status(500).json({
-            message: "Server Error"
-        });
-    }
+    next(error);
+
+}
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
 
     try {
 
@@ -91,13 +89,9 @@ res.json({
 
     } catch (error) {
 
-        console.log(error);
+    next(error);
 
-        res.status(500).json({
-            message: "Server Error"
-        });
-
-    }
+}
 
 };
 

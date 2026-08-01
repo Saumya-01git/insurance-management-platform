@@ -13,6 +13,10 @@ const reportRoutes = require("./routes/reportRoutes");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
+const errorHandler = require("./middleware/errorMiddleware");
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
 
 const limiter = rateLimit({
 
@@ -33,6 +37,13 @@ app.use(helmet());
 app.use(limiter);
 app.use(morgan("dev"));
 app.use(express.json());
+
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec)
+);
+
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api/auth", authRoutes);
@@ -42,5 +53,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/claims", claimRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/reports", reportRoutes);
+
+app.use(errorHandler);
 
 module.exports = app;

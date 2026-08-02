@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { RefreshCw, X, Calendar } from "lucide-react";
-import { formatPolicyNumber, formatDate } from "../../utils/policyHelpers";
+import { formatPolicyNumber, formatDate, getCustomerName } from "../../utils/policyHelpers";
 
 const RenewPolicyModal = ({ isOpen, onClose, onConfirm, policy }) => {
   const [newEndDate, setNewEndDate] = useState("2027-08-01");
 
   if (!isOpen || !policy) return null;
+
+  const customerName = getCustomerName(policy.customer);
 
   const handleRenew = (e) => {
     e.preventDefault();
@@ -29,11 +31,11 @@ const RenewPolicyModal = ({ isOpen, onClose, onConfirm, policy }) => {
         </div>
 
         <div className="space-y-2">
-          <h3 className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <h3 className="text-lg font-extrabold text-[#0F172A] dark:text-white tracking-tight">
             Renew Policy Coverage Term
           </h3>
           <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            Extend coverage term for <span className="font-mono font-extrabold text-[#2563EB] dark:text-cyan-400">{formatPolicyNumber(policy.policyNumber || policy.id)}</span> ({policy.customer}).
+            Extend coverage term for <span className="font-mono font-extrabold text-[#2563EB] dark:text-cyan-400">{formatPolicyNumber(policy.policyNumber || policy.id)}</span> ({customerName}).
           </p>
         </div>
 

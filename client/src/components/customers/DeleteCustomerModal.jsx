@@ -4,6 +4,11 @@ import { formatCustomerId } from "../../utils/customerHelpers";
 const DeleteCustomerModal = ({ isOpen, onClose, onConfirm, customer }) => {
   if (!isOpen || !customer) return null;
 
+  const customerName =
+    typeof customer.fullName === "string"
+      ? customer.fullName
+      : customer.name || customer.user?.fullName || "Carrier Customer";
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="w-full max-w-md rounded-3xl bg-white dark:bg-[#0C1424] border border-slate-200/80 dark:border-white/10 shadow-2xl overflow-hidden p-6 space-y-5">
@@ -26,7 +31,7 @@ const DeleteCustomerModal = ({ isOpen, onClose, onConfirm, customer }) => {
             Delete Customer Record?
           </h3>
           <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            Are you sure you want to permanently delete <strong className="text-slate-900 dark:text-white">{customer.fullName}</strong> (<span className="font-mono text-[#2563EB] dark:text-cyan-400">{formatCustomerId(customer.id)}</span>)?
+            Are you sure you want to permanently delete <strong className="text-slate-900 dark:text-white">{customerName}</strong> (<span className="font-mono text-[#2563EB] dark:text-cyan-400">{formatCustomerId(customer.id)}</span>)?
           </p>
           <div className="p-3 rounded-xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/30 text-[11px] text-rose-700 dark:text-rose-300 font-semibold space-y-1">
             <p>⚠️ Warning: This action cannot be undone.</p>

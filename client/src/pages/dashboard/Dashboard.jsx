@@ -14,95 +14,96 @@ import NotificationPanel from "../../components/dashboard/NotificationPanel";
 import UpcomingRenewals from "../../components/dashboard/UpcomingRenewals";
 import LoadingSkeleton from "../../components/dashboard/LoadingSkeleton";
 
-// API Integration Services
-import { customerApi } from "../../api/customerApi";
-import { policyApi } from "../../api/policyApi";
-import { claimApi } from "../../api/claimApi";
-import { paymentApi } from "../../api/paymentApi";
-import { toast } from "react-hot-toast";
+// Services
+import { customerService } from "../../services/customerService";
+import { policyService } from "../../services/policyService";
+import { claimService } from "../../services/claimService";
+import { paymentService } from "../../services/paymentService";
+import { formatCurrency } from "../../utils/policyHelpers";
+import { Users, Shield, FileText, DollarSign } from "lucide-react";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLiveConnected, setIsLiveConnected] = useState(false);
   const [liveStats, setLiveStats] = useState(null);
 
+  const [customers, setCustomers] = useState([]);
+  const [policies, setPolicies] = useState([]);
+  const [claims, setClaims] = useState([]);
+  const [payments, setPayments] = useState([]);
+
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
-      // Fetch live data across backend REST endpoints in parallel
-      const [customersRes, policiesRes, claimsRes, paymentsRes] = await Promise.allSettled([
-        customerApi.getAll(),
-        policyApi.getAll(),
-        claimApi.getAll(),
-        paymentApi.getAll(),
+
+      const [custData, polData, clmData, payData] = await Promise.all([
+        customerService.getCustomers().catch(() => []),
+        policyService.getPolicies().catch(() => []),
+        claimService.getClaims().catch(() => []),
+        paymentService.getPayments().catch(() => []),
       ]);
 
-      let customersCount = 8932;
-      let policiesCount = 24583;
-      let pendingClaimsCount = 1247;
-      let totalRevenue = 4520000;
-      let connected = false;
+      const safeCust = Array.isArray(custData) ? custData : [];
+      const safePol = Array.isArray(polData) ? polData : [];
+      const safeClm = Array.isArray(clmData) ? clmData : [];
+      const safePay = Array.isArray(payData) ? payData : [];
 
-      if (customersRes.status === "fulfilled" && Array.isArray(customersRes.value)) {
-        customersCount = customersRes.value.length || customersCount;
-        connected = true;
-      }
-      if (policiesRes.status === "fulfilled" && Array.isArray(policiesRes.value)) {
-        policiesCount = policiesRes.value.length || policiesCount;
-        connected = true;
-      }
-      if (claimsRes.status === "fulfilled" && Array.isArray(claimsRes.value)) {
-        const pending = claimsRes.value.filter((c) => c.status === "PENDING" || c.status === "UNDER_REVIEW");
-        pendingClaimsCount = pending.length || pendingClaimsCount;
-        connected = true;
-      }
-      if (paymentsRes.status === "fulfilled" && Array.isArray(paymentsRes.value)) {
-        const sum = paymentsRes.value.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-        if (sum > 0) totalRevenue = sum;
-        connected = true;
-      }
+      setCustomers(safeCust);
+      setPolicies(safePol);
+      setClaims(safeClm);
+      setPayments(safePay);
 
-      setIsLiveConnected(connected);
+      const customersCount = safeCust.length;
+      const policiesCount = safePol.length;
+      const pendingClaimsCount = safeClm.filter(
+        (c) => (c.status || "").toUpperCase() === "PENDING" || (c.status || "").toUpperCase().includes("REVIEW")
+      ).length;
+
+      const totalRevenue = safePay.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0) ||
+        safePol.reduce((acc, curr) => acc + (Number(curr.premium) || 0), 0);
+
+      setIsLiveConnected(true);
+
       setLiveStats([
         {
           title: "Total Customers",
           value: customersCount.toLocaleString(),
           change: "+12.4%",
           isPositive: true,
-          icon: undefined,
+          icon: Users,
           color: "blue",
-          description: connected ? "Synced with Prisma DB" : "Active policyholders on platform",
+          description: "Active onboarded policyholders",
         },
         {
           title: "Active Policies",
           value: policiesCount.toLocaleString(),
           change: "+8.7%",
           isPositive: true,
-          icon: undefined,
+          icon: Shield,
           color: "cyan",
-          description: connected ? "Synced with Prisma DB" : "Underwritten carrier agreements",
+          description: "Underwritten carrier agreements",
         },
         {
           title: "Pending Claims",
           value: pendingClaimsCount.toLocaleString(),
           change: "-3.2%",
           isPositive: true,
-          icon: undefined,
+          icon: FileText,
           color: "amber",
-          description: connected ? "Synced with Prisma DB" : "Under active risk assessment",
+          description: "Under active risk assessment",
         },
         {
           title: "Monthly Revenue",
-          value: `$${(totalRevenue / 1000000).toFixed(2)}M`,
+          value: formatCurrency(totalRevenue),
           change: "+15.8%",
           isPositive: true,
-          icon: undefined,
+          icon: DollarSign,
           color: "emerald",
-          description: connected ? "Synced with Prisma DB" : "Gross written premium collected",
+          description: "Gross written premium collected",
         },
       ]);
     } catch (err) {
-      console.warn("Backend REST API offline. Operating in fallback mode.", err);
+      console.warn("Error loading dashboard data:", err);
     } finally {
       setIsLoading(false);
     }
@@ -117,48 +118,52 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-7 animate-in fade-in duration-300">
+    <div className="animate-in fade-in duration-300 pb-10">
       {/* Top Page Header */}
-      <DashboardHeader
-        title="Carrier Executive Dashboard"
-        subtitle={
-          isLiveConnected
-            ? "Live REST Synchronization Active • Connected to Prisma & Express Engine"
-            : "Enterprise Insurance Carrier Metrics & Underwriting Analytics"
-        }
-      />
+      <div style={{ marginBottom: "28px" }}>
+        <DashboardHeader
+          title="Carrier Executive Dashboard"
+          subtitle="Enterprise Insurance Carrier Metrics & Underwriting Analytics"
+        />
+      </div>
 
       {/* Welcome Banner */}
-      <WelcomeCard />
+      <div style={{ marginBottom: "28px" }}>
+        <WelcomeCard />
+      </div>
 
       {/* 4 Main KPI Stat Cards */}
-      <StatsGrid statsData={liveStats} />
+      <div style={{ marginBottom: "28px" }}>
+        <StatsGrid statsData={liveStats} />
+      </div>
 
       {/* Quick Action Tools Bar */}
-      <QuickActions />
+      <div style={{ marginBottom: "28px" }}>
+        <QuickActions />
+      </div>
 
       {/* Charts Grid - Section 1 (Revenue & Claims Breakdown) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
         <div className="lg:col-span-8">
-          <RevenueChart />
+          <RevenueChart paymentsList={payments} policiesList={policies} />
         </div>
         <div className="lg:col-span-4">
-          <ClaimsChart />
+          <ClaimsChart claimsList={claims} />
         </div>
       </div>
 
       {/* Charts Grid - Section 2 (Policy Mix & Customer Acquisition) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
         <div className="lg:col-span-6">
-          <PolicyChart />
+          <PolicyChart policiesList={policies} />
         </div>
         <div className="lg:col-span-6">
-          <CustomerGrowthChart />
+          <CustomerGrowthChart customersList={customers} />
         </div>
       </div>
 
       {/* Tables Section (Recent Customers & Recent Claims) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
         <div className="lg:col-span-6">
           <RecentCustomersTable />
         </div>
@@ -167,8 +172,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Bottom Operational Intelligence Grid (Renewals, System Activity & Alerts) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Bottom Operational Intelligence Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
         <div className="lg:col-span-4">
           <UpcomingRenewals />
         </div>

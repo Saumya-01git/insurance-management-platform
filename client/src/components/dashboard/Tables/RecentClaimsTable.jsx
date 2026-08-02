@@ -1,58 +1,27 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, ArrowUpRight } from "lucide-react";
-
-const recentClaims = [
-  {
-    claimId: "CLM-9021",
-    customer: "David Vance",
-    type: "Property Loss",
-    amount: "$45,000",
-    status: "Under Review",
-    date: "Aug 01, 2026",
-  },
-  {
-    claimId: "CLM-9020",
-    customer: "Global Logistics",
-    type: "Auto Collision",
-    amount: "$12,400",
-    status: "Approved",
-    date: "Jul 31, 2026",
-  },
-  {
-    claimId: "CLM-9019",
-    customer: "Sarah Jenkins",
-    type: "Medical Claim",
-    amount: "$3,850",
-    status: "Approved",
-    date: "Jul 30, 2026",
-  },
-  {
-    claimId: "CLM-9018",
-    customer: "Marcus Aurelius",
-    type: "Life Indemnity",
-    amount: "$250,000",
-    status: "Pending Investigation",
-    date: "Jul 28, 2026",
-  },
-  {
-    claimId: "CLM-9017",
-    customer: "Apex Tech Inc",
-    type: "Cyber Loss",
-    amount: "$18,200",
-    status: "Rejected",
-    date: "Jul 25, 2026",
-  },
-];
+import { claimService } from "../../../services/claimService";
+import { formatClaimId, formatCurrency, formatDate, getCustomerName } from "../../../utils/claimHelpers";
 
 const statusStyles = {
-  Approved: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/30",
-  "Under Review": "bg-cyan-50 text-cyan-600 dark:bg-cyan-950/40 dark:text-cyan-400 border-cyan-200 dark:border-cyan-900/30",
-  "Pending Investigation": "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200 dark:border-amber-900/30",
-  Rejected: "bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 border-rose-200 dark:border-rose-900/30",
+  APPROVED: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/30",
+  UNDER_REVIEW: "bg-cyan-50 text-cyan-600 dark:bg-cyan-950/40 dark:text-cyan-400 border-cyan-200 dark:border-cyan-900/30",
+  PENDING: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200 dark:border-amber-900/30",
+  REJECTED: "bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 border-rose-200 dark:border-rose-900/30",
 };
 
 const RecentClaimsTable = () => {
   const navigate = useNavigate();
+  const [claims, setClaims] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const list = await claimService.getClaims();
+      setClaims(Array.isArray(list) ? list.slice(0, 5) : []);
+    };
+    load();
+  }, []);
 
   return (
     <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0c1424] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
@@ -85,34 +54,46 @@ const RecentClaimsTable = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-semibold">
-            {recentClaims.map((claim) => (
-              <tr key={claim.claimId} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
-                <td className="py-3.5 pr-4 font-mono font-extrabold text-[#2563EB] dark:text-cyan-400">
-                  {claim.claimId}
-                </td>
-                <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
-                  {claim.customer}
-                </td>
-                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">
-                  {claim.type}
-                </td>
-                <td className="py-3.5 px-4 font-extrabold text-slate-900 dark:text-white">
-                  {claim.amount}
-                </td>
-                <td className="py-3.5 px-4">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${
-                      statusStyles[claim.status] || "bg-slate-100 text-slate-600"
-                    }`}
-                  >
-                    {claim.status}
-                  </span>
-                </td>
-                <td className="py-3.5 pl-4 text-right text-slate-500 dark:text-slate-400 font-medium">
-                  {claim.date}
+            {claims.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="py-6 text-center text-slate-400 text-xs font-medium">
+                  No active claims found in registry.
                 </td>
               </tr>
-            ))}
+            ) : (
+              claims.map((claim) => {
+                const customerName = getCustomerName(claim.customer);
+                const statusKey = (claim.status || "PENDING").toUpperCase();
+                return (
+                  <tr key={claim.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="py-3.5 pr-4 font-mono font-extrabold text-[#2563EB] dark:text-cyan-400">
+                      {formatClaimId(claim.claimId || claim.id)}
+                    </td>
+                    <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
+                      {customerName}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">
+                      {claim.claimType}
+                    </td>
+                    <td className="py-3.5 px-4 font-extrabold text-slate-900 dark:text-white">
+                      {typeof claim.claimAmount === "number" ? formatCurrency(claim.claimAmount) : claim.claimAmount}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${
+                          statusStyles[statusKey] || "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        {statusKey.replace("_", " ")}
+                      </span>
+                    </td>
+                    <td className="py-3.5 pl-4 text-right text-slate-500 dark:text-slate-400 font-medium">
+                      {formatDate(claim.date)}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

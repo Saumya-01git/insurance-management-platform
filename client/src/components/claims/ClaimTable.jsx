@@ -21,110 +21,110 @@ const ClaimTable = ({ claims, onView, onEdit, onApprove, onReject, onDelete }) =
     <div className="w-full overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#0C1424] shadow-sm">
       <table className="w-full text-left border-collapse min-w-[1050px]">
         <thead>
-          <tr className="border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-900/50 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-            <th className="py-4 px-5 min-w-[120px]">Claim ID</th>
-            <th className="py-4 px-5 min-w-[170px]">Customer</th>
-            <th className="py-4 px-5 min-w-[130px]">Policy #</th>
-            <th className="py-4 px-5 min-w-[140px]">Loss Type</th>
-            <th className="py-4 px-5 min-w-[130px]">Claim Amount</th>
-            <th className="py-4 px-5 min-w-[120px]">Filing Date</th>
-            <th className="py-4 px-5 min-w-[130px]">Status</th>
-            <th className="py-4 px-5 min-w-[150px]">Assigned Agent</th>
-            <th className="py-4 px-5 text-right min-w-[150px]">Actions</th>
+          <tr className="border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/90 dark:bg-slate-900/60 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <th className="py-4.5 px-6 min-w-[130px]">Claim ID</th>
+            <th className="py-4.5 px-6 min-w-[180px]">Customer</th>
+            <th className="py-4.5 px-6 min-w-[140px]">Policy #</th>
+            <th className="py-4.5 px-6 min-w-[150px]">Loss Type</th>
+            <th className="py-4.5 px-6 min-w-[140px]">Claim Amount</th>
+            <th className="py-4.5 px-6 min-w-[130px]">Filing Date</th>
+            <th className="py-4.5 px-6 min-w-[140px]">Status</th>
+            <th className="py-4.5 px-6 min-w-[160px]">Assigned Agent</th>
+            <th className="py-4.5 px-6 text-right min-w-[160px]">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-semibold">
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs sm:text-sm font-semibold">
           {claims.map((clm) => {
             const customerName = getCustomerName(clm.customer);
             return (
               <tr key={clm.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
                 {/* Claim ID */}
-                <td className="py-4.5 px-5 font-mono font-extrabold text-[#2563EB] dark:text-cyan-400 whitespace-nowrap">
+                <td className="py-5 px-6 font-mono font-extrabold text-[#2563EB] dark:text-cyan-400 whitespace-nowrap text-sm">
                   {formatClaimId(clm.claimId || clm.id)}
                 </td>
 
                 {/* Customer */}
-                <td className="py-4.5 px-5 font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
+                <td className="py-5 px-6 font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
                   <span className="hover:text-[#2563EB] cursor-pointer" onClick={() => onView(clm)}>
                     {customerName}
                   </span>
                 </td>
 
                 {/* Policy # */}
-                <td className="py-4.5 px-5 font-mono text-slate-600 dark:text-slate-300 font-bold whitespace-nowrap">
+                <td className="py-5 px-6 font-mono text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap">
                   {clm.policyNumber || "POL-9012"}
                 </td>
 
                 {/* Loss Type */}
-                <td className="py-4.5 px-5 text-slate-700 dark:text-slate-200 font-bold whitespace-nowrap">
+                <td className="py-5 px-6 text-slate-800 dark:text-slate-200 font-bold whitespace-nowrap">
                   {clm.claimType}
                 </td>
 
                 {/* Amount */}
-                <td className="py-4.5 px-5 font-black text-slate-900 dark:text-white whitespace-nowrap">
+                <td className="py-5 px-6 font-black text-slate-900 dark:text-white whitespace-nowrap text-sm sm:text-base">
                   {typeof clm.claimAmount === "number" ? formatCurrency(clm.claimAmount) : clm.claimAmount}
                 </td>
 
                 {/* Date */}
-                <td className="py-4.5 px-5 text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">
+                <td className="py-5 px-6 text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">
                   {formatDate(clm.date)}
                 </td>
 
                 {/* Status */}
-                <td className="py-4.5 px-5 whitespace-nowrap">
+                <td className="py-5 px-6 whitespace-nowrap">
                   <ClaimStatusBadge status={clm.status} />
                 </td>
 
                 {/* Assigned Agent */}
-                <td className="py-4.5 px-5 text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                <td className="py-5 px-6 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap">
                   {clm.assignedAgent || "Agent Saumya"}
                 </td>
 
                 {/* Actions */}
-                <td className="py-4.5 px-5 text-right whitespace-nowrap">
-                  <div className="flex items-center justify-end gap-1.5">
+                <td className="py-5 px-6 text-right whitespace-nowrap">
+                  <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => onView(clm)}
-                      className="p-2 rounded-xl text-slate-500 hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer"
+                      className="p-2.5 rounded-xl text-slate-500 hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer"
                       title="View Details"
                     >
-                      <Eye className="w-4 h-4" />
+                      <Eye className="w-4.5 h-4.5" />
                     </button>
 
                     <button
                       onClick={() => onEdit(clm)}
-                      className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors cursor-pointer"
+                      className="p-2.5 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors cursor-pointer"
                       title="Update Claim"
                     >
-                      <Edit3 className="w-4 h-4" />
+                      <Edit3 className="w-4.5 h-4.5" />
                     </button>
 
                     {clm.status !== "APPROVED" && (
                       <button
                         onClick={() => onApprove(clm.id)}
-                        className="p-2 rounded-xl text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
+                        className="p-2.5 rounded-xl text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
                         title="Approve Claim"
                       >
-                        <CheckCircle className="w-4 h-4" />
+                        <CheckCircle className="w-4.5 h-4.5" />
                       </button>
                     )}
 
                     {clm.status !== "REJECTED" && (
                       <button
                         onClick={() => onReject(clm.id)}
-                        className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                        className="p-2.5 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                         title="Reject Claim"
                       >
-                        <XCircle className="w-4 h-4" />
+                        <XCircle className="w-4.5 h-4.5" />
                       </button>
                     )}
 
                     <button
                       onClick={() => onDelete(clm)}
-                      className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                      className="p-2.5 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       title="Delete Claim"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4.5 h-4.5" />
                     </button>
                   </div>
                 </td>

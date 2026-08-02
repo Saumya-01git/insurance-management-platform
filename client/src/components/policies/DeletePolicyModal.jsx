@@ -1,8 +1,10 @@
 import { AlertTriangle, Trash2, X } from "lucide-react";
-import { formatPolicyNumber } from "../../utils/policyHelpers";
+import { formatPolicyNumber, getCustomerName } from "../../utils/policyHelpers";
 
 const DeletePolicyModal = ({ isOpen, onClose, onConfirm, policy }) => {
   if (!isOpen || !policy) return null;
+
+  const customerName = getCustomerName(policy.customer);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
@@ -24,7 +26,7 @@ const DeletePolicyModal = ({ isOpen, onClose, onConfirm, policy }) => {
             Cancel & Delete Policy?
           </h3>
           <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            Are you sure you want to terminate <span className="font-mono text-[#2563EB] dark:text-cyan-400 font-extrabold">{formatPolicyNumber(policy.policyNumber || policy.id)}</span> ({policy.policyType}) for customer <strong className="text-slate-900 dark:text-white">{policy.customer}</strong>?
+            Are you sure you want to terminate <span className="font-mono text-[#2563EB] dark:text-cyan-400 font-extrabold">{formatPolicyNumber(policy.policyNumber || policy.id)}</span> ({policy.policyType}) for customer <strong className="text-slate-900 dark:text-white">{customerName}</strong>?
           </p>
         </div>
 

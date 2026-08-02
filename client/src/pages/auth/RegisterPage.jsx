@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../../context/AuthContext";
 import Input from "../../components/ui/Input";
 import Select from "../../components/ui/Select";
-import { Mail, Lock, User, Eye, EyeOff, UserPlus, ArrowRight, Building } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, UserPlus, ArrowRight, Building, CheckCircle2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -17,6 +17,7 @@ const RegisterPage = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -28,18 +29,44 @@ const RegisterPage = () => {
     },
   });
 
+  const passwordVal = watch("password", "");
+
+  const hasMinLength = passwordVal.length >= 8;
+  const hasUpper = /[A-Z]/.test(passwordVal);
+  const hasLower = /[a-z]/.test(passwordVal);
+  const hasNumber = /[0-9]/.test(passwordVal);
+  const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(passwordVal);
+
   const onSubmit = async (data) => {
+    if (!data.name || data.name.trim().length === 0) {
+      toast.error("Full Name cannot be empty or blank.");
+      return;
+    }
+
     if (!agreeTerms) {
       toast.error("Please agree to the Terms of Service and Privacy Policy.");
       return;
     }
+
     try {
       setIsLoading(true);
-      await registerAuth(data);
-      toast.success("Registration successful! Access granted.");
-      navigate("/dashboard");
+      const res = await registerAuth({
+        name: data.name.trim(),
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+        role: data.role || "AGENT",
+      });
+
+      const role = (res?.user?.role || data.role || "AGENT").toUpperCase();
+      toast.success(`Account registered successfully as ${role}!`, { icon: "🎉" });
+
+      if (role === "CUSTOMER") {
+        navigate("/customer-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Registration failed. Email might already exist.");
+      toast.error(err?.message || "Registration failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -47,11 +74,11 @@ const RegisterPage = () => {
 
   return (
     <div className="bg-white dark:bg-[#101828] rounded-3xl p-8 sm:p-10 shadow-sm border border-slate-200/80 dark:border-white/10 space-y-5 animate-in fade-in duration-300">
-      {/* Header Tag (Exact Match to Screenshot 2!) */}
+      {/* Header Tag */}
       <div className="space-y-1.5">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-900/40 text-[#2563EB] dark:text-blue-400 text-xs font-bold">
           <UserPlus className="w-3.5 h-3.5" />
-          <span>New Account</span>
+          <span>New Account Registration</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
           Create Your Account
@@ -66,22 +93,29 @@ const RegisterPage = () => {
         <Input
           label="Full Name *"
           icon={User}
-          placeholder="Saumya Singh"
+          placeholder="e.g. Saumya Admin"
           error={errors.name?.message}
-          {...register("name", { required: "Full name is required" })}
+          {...register("name", {
+            required: "Full Name is required and cannot be empty",
+            minLength: {
+              value: 2,
+              message: "Full Name must be at least 2 characters",
+            },
+            validate: (val) => val.trim().length > 0 || "Full Name cannot be blank spaces",
+          })}
         />
 
         <Input
           label="Work Email *"
           type="email"
           icon={Mail}
-          placeholder="saumya.singh@insurepulse.com"
+          placeholder="e.g. saumya@admin.com"
           error={errors.email?.message}
           {...register("email", {
-            required: "Email is required",
+            required: "Email address is required",
             pattern: {
-              value: /^\S+@\S+$/i,
-              message: "Please enter a valid email address",
+              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: "Please enter a valid email address (e.g. user@gmail.com)",
             },
           })}
         />
@@ -89,9 +123,9 @@ const RegisterPage = () => {
         <Select
           label="Account Type *"
           options={[
-            { value: "AGENT", label: "Insurance Agent" },
             { value: "ADMIN", label: "Administrator (Full Access)" },
-            { value: "CUSTOMER", label: "Customer (Self-Service)" },
+            { value: "AGENT", label: "Insurance Agent" },
+            { value: "CUSTOMER", label: "Customer (Self-Service Portal)" },
           ]}
           {...register("role", { required: "Role is required" })}
         />
@@ -99,15 +133,15 @@ const RegisterPage = () => {
         <Input
           label="Organization *"
           icon={Building}
-          placeholder="SecureLife Insurance Co."
+          placeholder="InsurePulse Global Suite"
           {...register("organization")}
         />
 
         <Input
-          label="Password *"
+          label="Password (8+ Characters) *"
           type={showPassword ? "text" : "password"}
           icon={Lock}
-          placeholder="••••••••••••"
+          placeholder="e.g. saumya123"
           error={errors.password?.message}
           rightElement={
             <button
@@ -121,13 +155,34 @@ const RegisterPage = () => {
           {...register("password", {
             required: "Password is required",
             minLength: {
-              value: 6,
-              message: "Password must be at least 6 characters",
+              value: 8,
+              message: "Password must be at least 8 characters long",
             },
           })}
         />
 
-        {/* Terms Checkbox (Exact Match to Screenshot 2!) */}
+        {/* Live Password Indicator */}
+        <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 space-y-1 text-[11px] font-semibold">
+          <p className="text-slate-400 uppercase tracking-wider font-extrabold text-[10px]">
+            Password Rule Checklist:
+          </p>
+          <div className="grid grid-cols-2 gap-1 text-[11px]">
+            <span className={hasMinLength ? "text-emerald-600 dark:text-emerald-400 font-extrabold" : "text-slate-400"}>
+              {hasMinLength ? "✓" : "○"} 8+ Characters
+            </span>
+            <span className={hasUpper ? "text-emerald-600 dark:text-emerald-400 font-extrabold" : "text-slate-400"}>
+              {hasUpper ? "✓" : "○"} 1 Uppercase (A-Z)
+            </span>
+            <span className={hasLower ? "text-emerald-600 dark:text-emerald-400 font-extrabold" : "text-slate-400"}>
+              {hasLower ? "✓" : "○"} 1 Lowercase (a-z)
+            </span>
+            <span className={hasNumber ? "text-emerald-600 dark:text-emerald-400 font-extrabold" : "text-slate-400"}>
+              {hasNumber ? "✓" : "○"} 1 Number (0-9)
+            </span>
+          </div>
+        </div>
+
+        {/* Terms Checkbox */}
         <div className="pt-1">
           <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-slate-400 font-medium">
             <input
@@ -149,7 +204,7 @@ const RegisterPage = () => {
           </label>
         </div>
 
-        {/* CTA Button (Exact Gradient Match to Screenshot 2!) */}
+        {/* CTA Button */}
         <div className="pt-2">
           <button
             type="submit"

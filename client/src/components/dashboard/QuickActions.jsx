@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import {
   UserPlus,
   ShieldPlus,
@@ -53,28 +52,30 @@ const QuickActions = ({ onOpenModal }) => {
   ];
 
   return (
-    <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0c1424] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
+    <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#0c1424] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-5">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-cyan-500" />
-          <h3 className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
+        <div className="flex items-center gap-2.5">
+          <Zap className="w-5 h-5 text-cyan-500" />
+          <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight">
             Quick Actions
           </h3>
         </div>
-        <span className="text-xs text-slate-400 font-medium">One-click carrier tools</span>
+        <span className="text-xs font-extrabold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+          One-click carrier tools
+        </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
         {actions.map((act, idx) => (
           <button
             key={idx}
             onClick={act.action}
-            className="p-3.5 rounded-2xl border bg-slate-50/50 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col items-center justify-center gap-2 group text-center"
+            className="p-4.5 rounded-2xl border bg-slate-50/70 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col items-center justify-center gap-2.5 group text-center"
           >
-            <div className={`w-10 h-10 rounded-xl ${act.color} border flex items-center justify-center group-hover:scale-110 transition-transform`}>
-              <act.icon className="w-5 h-5" />
+            <div className={`w-11 h-11 rounded-xl ${act.color} border flex items-center justify-center group-hover:scale-110 transition-transform`}>
+              <act.icon className="w-5.5 h-5.5" />
             </div>
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-[#2563EB] dark:group-hover:text-cyan-400 transition-colors">
+            <span className="text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-[#2563EB] dark:group-hover:text-cyan-400 transition-colors">
               {act.label}
             </span>
           </button>

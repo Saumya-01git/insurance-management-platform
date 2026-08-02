@@ -8,44 +8,44 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, Calendar } from "lucide-react";
+import { TrendingUp } from "lucide-react";
+import { formatCurrency } from "../../../utils/policyHelpers";
 
-const data = [
-  { month: "Jan", revenue: 2400000, target: 2000000 },
-  { month: "Feb", revenue: 2800000, target: 2200000 },
-  { month: "Mar", revenue: 3200000, target: 2500000 },
-  { month: "Apr", revenue: 3100000, target: 2800000 },
-  { month: "May", revenue: 3800000, target: 3000000 },
-  { month: "Jun", revenue: 4200000, target: 3200000 },
-  { month: "Jul", revenue: 4000000, target: 3500000 },
-  { month: "Aug", revenue: 4520000, target: 3800000 },
-  { month: "Sep", revenue: 4800000, target: 4000000 },
-  { month: "Oct", revenue: 5100000, target: 4200000 },
-  { month: "Nov", revenue: 5400000, target: 4500000 },
-  { month: "Dec", revenue: 5900000, target: 4800000 },
-];
-
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700 p-3 rounded-xl shadow-xl text-white text-xs space-y-1">
-        <p className="font-bold text-slate-300">{label} 2026</p>
-        <p className="text-cyan-400 font-extrabold">
-          Revenue: ${(payload[0].value / 1000000).toFixed(2)}M
-        </p>
-        {payload[1] && (
-          <p className="text-blue-400 font-semibold">
-            Target: ${(payload[1].value / 1000000).toFixed(2)}M
-          </p>
-        )}
-      </div>
-    );
-  }
-  return null;
-};
-
-const RevenueChart = () => {
+const RevenueChart = ({ revenueData: propData, paymentsList = [], policiesList = [] }) => {
   const [timeRange, setTimeRange] = useState("12M");
+
+  let chartData = propData;
+
+  if (!chartData) {
+    const totalRev = paymentsList.reduce((sum, p) => sum + (Number(p.amount) || 0), 0) ||
+      policiesList.reduce((sum, p) => sum + (Number(p.premium) || 0), 0) || 128400;
+
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    chartData = months.map((m, idx) => ({
+      month: m,
+      revenue: Math.round((totalRev / 8) * (0.5 + (idx * 0.1))),
+      target: Math.round((totalRev / 8) * (0.6 + (idx * 0.08))),
+    }));
+  }
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700 p-3 rounded-xl shadow-xl text-white text-xs space-y-1">
+          <p className="font-bold text-slate-300">{label} 2026</p>
+          <p className="text-cyan-400 font-extrabold">
+            Revenue: {formatCurrency(payload[0].value)}
+          </p>
+          {payload[1] && (
+            <p className="text-blue-400 font-semibold">
+              Target: {formatCurrency(payload[1].value)}
+            </p>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0c1424] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-5">
@@ -83,7 +83,7 @@ const RevenueChart = () => {
 
       <div className="h-72 w-full pt-2">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#2563EB" stopOpacity={0.4} />
@@ -99,8 +99,8 @@ const RevenueChart = () => {
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "#64748B", fontSize: 12 }}
-              tickFormatter={(val) => `$${val / 1000000}M`}
+              tick={{ fill: "#64748B", fontSize: 11 }}
+              tickFormatter={(val) => `$${val >= 1000 ? Math.round(val / 1000) + "k" : val}`}
             />
             <Tooltip content={<CustomTooltip />} />
             <Area

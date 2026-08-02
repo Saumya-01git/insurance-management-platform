@@ -1,8 +1,10 @@
 import { AlertTriangle, Trash2, X } from "lucide-react";
-import { formatClaimId } from "../../utils/claimHelpers";
+import { formatClaimId, getCustomerName } from "../../utils/claimHelpers";
 
 const DeleteClaimModal = ({ isOpen, onClose, onConfirm, claim }) => {
   if (!isOpen || !claim) return null;
+
+  const customerName = getCustomerName(claim.customer);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
@@ -24,7 +26,7 @@ const DeleteClaimModal = ({ isOpen, onClose, onConfirm, claim }) => {
             Delete Claim Record?
           </h3>
           <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            Are you sure you want to delete claim filing <span className="font-mono font-extrabold text-[#2563EB] dark:text-cyan-400">{formatClaimId(claim.claimId || claim.id)}</span> for customer <strong className="text-slate-900 dark:text-white">{claim.customer}</strong>?
+            Are you sure you want to delete claim filing <span className="font-mono font-extrabold text-[#2563EB] dark:text-cyan-400">{formatClaimId(claim.claimId || claim.id)}</span> for customer <strong className="text-slate-900 dark:text-white">{customerName}</strong>?
           </p>
         </div>
 

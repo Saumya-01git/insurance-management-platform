@@ -18,33 +18,33 @@ const CustomerTable = ({ customers, onView, onEdit, onDelete }) => {
 
   return (
     <div className="w-full overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#0C1424] shadow-sm">
-      <table className="w-full text-left border-collapse min-w-[1000px]">
+      <table className="w-full text-left border-collapse min-w-[1050px]">
         <thead>
-          <tr className="border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-900/50 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-            <th className="py-4 px-5 min-w-[120px]">Customer ID</th>
-            <th className="py-4 px-5 min-w-[70px]">Profile</th>
-            <th className="py-4 px-5 min-w-[180px]">Customer Name</th>
-            <th className="py-4 px-5 min-w-[200px]">Email</th>
-            <th className="py-4 px-5 min-w-[140px]">Phone</th>
-            <th className="py-4 px-5 text-center min-w-[110px]">Policies</th>
-            <th className="py-4 px-5 min-w-[130px]">Total Premium</th>
-            <th className="py-4 px-5 min-w-[130px]">Status</th>
-            <th className="py-4 px-5 min-w-[130px]">Created Date</th>
-            <th className="py-4 px-5 text-right min-w-[110px]">Actions</th>
+          <tr className="border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-900/50 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <th className="py-4.5 px-6 min-w-[130px]">Customer ID</th>
+            <th className="py-4.5 px-6 min-w-[70px]">Profile</th>
+            <th className="py-4.5 px-6 min-w-[190px]">Customer Name</th>
+            <th className="py-4.5 px-6 min-w-[210px]">Email</th>
+            <th className="py-4.5 px-6 min-w-[150px]">Phone</th>
+            <th className="py-4.5 px-6 text-center min-w-[120px]">Policies</th>
+            <th className="py-4.5 px-6 min-w-[140px]">Total Premium</th>
+            <th className="py-4.5 px-6 min-w-[130px]">Status</th>
+            <th className="py-4.5 px-6 min-w-[130px]">Created Date</th>
+            <th className="py-4.5 px-6 text-right min-w-[120px]">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs font-semibold">
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs sm:text-sm font-semibold">
           {customers.map((cust) => {
             const badgeStyle = getStatusBadgeStyle(cust.status);
             return (
               <tr key={cust.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
                 {/* ID */}
-                <td className="py-4.5 px-5 font-mono font-extrabold text-[#2563EB] dark:text-cyan-400 whitespace-nowrap">
+                <td className="py-5 px-6 font-mono font-extrabold text-[#2563EB] dark:text-cyan-400 whitespace-nowrap text-xs sm:text-sm">
                   {formatCustomerId(cust.id)}
                 </td>
 
                 {/* Profile Photo */}
-                <td className="py-4.5 px-5 whitespace-nowrap">
+                <td className="py-5 px-6 whitespace-nowrap">
                   {cust.avatar ? (
                     <img
                       src={cust.avatar}
@@ -59,41 +59,41 @@ const CustomerTable = ({ customers, onView, onEdit, onDelete }) => {
                 </td>
 
                 {/* Name */}
-                <td className="py-4.5 px-5 font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
+                <td className="py-5 px-6 font-black text-slate-900 dark:text-white whitespace-nowrap text-xs sm:text-sm">
                   <div>
                     <p className="hover:text-[#2563EB] cursor-pointer" onClick={() => onView(cust)}>
                       {cust.fullName}
                     </p>
-                    <p className="text-[10px] text-slate-400 font-normal">{cust.occupation || "Individual"}</p>
+                    <p className="text-xs text-slate-400 font-medium">{cust.occupation || "Individual"}</p>
                   </div>
                 </td>
 
                 {/* Email */}
-                <td className="py-4.5 px-5 text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                <td className="py-5 px-6 text-slate-600 dark:text-slate-300 font-semibold whitespace-nowrap text-xs sm:text-sm">
                   {cust.email}
                 </td>
 
                 {/* Phone */}
-                <td className="py-4.5 px-5 text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                <td className="py-5 px-6 text-slate-600 dark:text-slate-300 font-semibold whitespace-nowrap text-xs sm:text-sm">
                   {cust.phone}
                 </td>
 
                 {/* Policy Count */}
-                <td className="py-4.5 px-5 text-center whitespace-nowrap">
-                  <span className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 text-[#2563EB] dark:text-cyan-400 font-extrabold text-xs border border-blue-100 dark:border-blue-900/30">
+                <td className="py-5 px-6 text-center whitespace-nowrap">
+                  <span className="px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/40 text-[#2563EB] dark:text-cyan-400 font-black text-xs border border-blue-100 dark:border-blue-900/30">
                     {cust.policiesCount || cust.policies?.length || 0} Policies
                   </span>
                 </td>
 
                 {/* Total Premium */}
-                <td className="py-4.5 px-5 font-black text-slate-900 dark:text-white whitespace-nowrap">
+                <td className="py-5 px-6 font-black text-slate-900 dark:text-white whitespace-nowrap text-xs sm:text-sm">
                   {formatCurrency(cust.totalPremium)}
                 </td>
 
                 {/* Status */}
-                <td className="py-4.5 px-5 whitespace-nowrap">
+                <td className="py-5 px-6 whitespace-nowrap">
                   <span
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold border ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold border ${badgeStyle.bg} ${badgeStyle.text} ${badgeStyle.border}`}
                   >
                     <span className={`w-1.5 h-1.5 rounded-full ${badgeStyle.dot}`} />
                     {cust.status || "ACTIVE"}
@@ -101,19 +101,19 @@ const CustomerTable = ({ customers, onView, onEdit, onDelete }) => {
                 </td>
 
                 {/* Created Date */}
-                <td className="py-4.5 px-5 text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap">
+                <td className="py-5 px-6 text-slate-600 dark:text-slate-300 font-semibold whitespace-nowrap text-xs sm:text-sm">
                   {formatDate(cust.createdDate)}
                 </td>
 
                 {/* Actions */}
-                <td className="py-4.5 px-5 text-right whitespace-nowrap">
+                <td className="py-5 px-6 text-right whitespace-nowrap">
                   <div className="flex items-center justify-end gap-1.5">
                     <button
                       onClick={() => onView(cust)}
                       className="p-2 rounded-xl text-slate-500 hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer"
                       title="View Details"
                     >
-                      <Eye className="w-4 h-4" />
+                      <Eye className="w-4.5 h-4.5" />
                     </button>
 
                     <button
@@ -121,7 +121,7 @@ const CustomerTable = ({ customers, onView, onEdit, onDelete }) => {
                       className="p-2 rounded-xl text-slate-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors cursor-pointer"
                       title="Edit Customer"
                     >
-                      <Edit3 className="w-4 h-4" />
+                      <Edit3 className="w-4.5 h-4.5" />
                     </button>
 
                     <button
@@ -129,7 +129,7 @@ const CustomerTable = ({ customers, onView, onEdit, onDelete }) => {
                       className="p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       title="Delete Customer"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4.5 h-4.5" />
                     </button>
                   </div>
                 </td>

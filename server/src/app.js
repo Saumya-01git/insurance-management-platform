@@ -10,6 +10,9 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const claimRoutes = require("./routes/claimRoutes");
 const documentRoutes = require("./routes/documentRoutes");
 const reportRoutes = require("./routes/reportRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const ticketRoutes = require("./routes/ticketRoutes");
+
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
@@ -19,15 +22,11 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
 
 const limiter = rateLimit({
-
     windowMs: 15 * 60 * 1000,
-
     max: 100,
-
     message: {
         message: "Too many requests. Please try again after 15 minutes."
     }
-
 });
 
 const app = express();
@@ -53,6 +52,8 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/claims", claimRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/tickets", ticketRoutes);
 
 app.use(errorHandler);
 

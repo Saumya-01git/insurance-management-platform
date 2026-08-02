@@ -12,8 +12,8 @@ const DashboardLayout = () => {
   const closeMobileSidebar = () => setIsMobileSidebarOpen(false);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#070D19] font-sans text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-[#2563EB] selection:text-white">
-      {/* Fixed Left Sidebar (Width = 256px when expanded, 80px when collapsed) */}
+    <div className="min-h-screen bg-[#F1F5F9] dark:bg-[#0B132B] font-sans text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-[#2563EB] selection:text-white">
+      {/* Fixed Left Sidebar */}
       <Sidebar
         isCollapsed={isSidebarCollapsed}
         toggleSidebar={toggleSidebar}
@@ -21,19 +21,17 @@ const DashboardLayout = () => {
         closeMobileSidebar={closeMobileSidebar}
       />
 
-      {/* Main Content Area: STRICT GUARANTEED LEFT MARGIN (256px or 80px) */}
+      {/* Main Content Area: 100% Width */}
       <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
-          isSidebarCollapsed ? "lg:ml-[80px]" : "lg:ml-64"
-        }`}
+        className="flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out"
         style={{
           marginLeft: isSidebarCollapsed ? "80px" : "256px",
         }}
       >
         <Navbar toggleMobileSidebar={toggleMobileSidebar} />
-        
-        {/* Spacious Main Page Content Wrapper */}
-        <main className="flex-1 overflow-x-hidden min-w-0 p-6 sm:p-8 lg:p-10 space-y-8 max-w-7xl mx-auto w-full">
+
+        {/* 100% Full-Width Content Container */}
+        <main className="flex-1 overflow-x-hidden min-w-0 p-6 sm:p-8 lg:p-10 space-y-9 w-full">
           <Outlet />
         </main>
       </div>

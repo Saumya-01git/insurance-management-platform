@@ -39,15 +39,14 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(false);
 
+  // Sync state to localStorage safely without race conditions
   useEffect(() => {
-    if (token && user) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-    } else {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    }
-  }, [token, user]);
+    if (token) localStorage.setItem("token", token);
+  }, [token]);
+
+  useEffect(() => {
+    if (user) localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem("carrier_user_registry", JSON.stringify(userRegistry));
@@ -65,6 +64,8 @@ export const AuthProvider = ({ children }) => {
       const userToken = res?.token || res?.data?.token || "bearer-token-12345";
 
       if (userData) {
+        localStorage.setItem("token", userToken);
+        localStorage.setItem("user", JSON.stringify(userData));
         setToken(userToken);
         setUser(userData);
         setLoading(false);
@@ -109,6 +110,10 @@ export const AuthProvider = ({ children }) => {
     };
     const fallbackToken = `mock-token-${Date.now()}`;
 
+    // Synchronously set localStorage first to prevent race condition redirect
+    localStorage.setItem("token", fallbackToken);
+    localStorage.setItem("user", JSON.stringify(fallbackUser));
+
     setToken(fallbackToken);
     setUser(fallbackUser);
     setLoading(false);
@@ -148,6 +153,8 @@ export const AuthProvider = ({ children }) => {
       };
       const newToken = res?.token || `mock-token-${Date.now()}`;
 
+      localStorage.setItem("token", newToken);
+      localStorage.setItem("user", JSON.stringify(newUser));
       setToken(newToken);
       setUser(newUser);
       return { success: true, user: newUser };
@@ -159,6 +166,9 @@ export const AuthProvider = ({ children }) => {
         role: cleanRole,
       };
       const fallbackToken = `mock-token-${Date.now()}`;
+
+      localStorage.setItem("token", fallbackToken);
+      localStorage.setItem("user", JSON.stringify(fallbackUser));
       setToken(fallbackToken);
       setUser(fallbackUser);
       return { success: true, user: fallbackUser };

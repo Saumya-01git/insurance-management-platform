@@ -22,11 +22,11 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: {
-        message: "Too many requests. Please try again after 15 minutes."
-    }
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: {
+    message: "Too many requests. Please try again after 15 minutes.",
+  },
 });
 
 const app = express();
@@ -37,11 +37,7 @@ app.use(limiter);
 app.use(morgan("dev"));
 app.use(express.json());
 
-app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec)
-);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
@@ -56,5 +52,13 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/tickets", ticketRoutes);
 
 app.use(errorHandler);
+
+// Failsafe auto-start if invoked directly via node src/app.js
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`InsurePulse Carrier API running on port ${PORT}`);
+  });
+}
 
 module.exports = app;

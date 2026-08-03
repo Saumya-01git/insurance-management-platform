@@ -13,7 +13,7 @@ const DashboardLayout = () => {
   const closeMobileSidebar = () => setIsMobileSidebarOpen(false);
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] dark:bg-[#0B132B] font-sans text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-[#2563EB] selection:text-white">
+    <div className="min-h-screen bg-[#F1F5F9] dark:bg-[#080617] font-sans text-slate-900 dark:text-slate-100 flex flex-col antialiased selection:bg-purple-600 selection:text-white">
       {/* Fixed Left Sidebar */}
       <Sidebar
         isCollapsed={isSidebarCollapsed}
@@ -22,17 +22,17 @@ const DashboardLayout = () => {
         closeMobileSidebar={closeMobileSidebar}
       />
 
-      {/* Main Content Area: 100% Width with Slight Space & Separation Gap from Sidebar */}
+      {/* Main Content Area: Offset with a Distinct 20px Breathing Gap from Sidebar */}
       <div
         className="flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out"
         style={{
-          marginLeft: isSidebarCollapsed ? "84px" : "268px",
+          marginLeft: isSidebarCollapsed ? "96px" : "288px",
         }}
       >
         <Navbar toggleMobileSidebar={toggleMobileSidebar} />
 
-        {/* 100% Full-Width Content Container with Slight Padding & Space from Border */}
-        <main className="flex-1 overflow-x-hidden min-w-0 p-5 sm:p-7 lg:p-9 space-y-8 w-full">
+        {/* Full Content Container with Generous Breathing Gap */}
+        <main className="flex-1 overflow-x-hidden min-w-0 p-6 sm:p-8 lg:p-10 pr-6 sm:pr-8 lg:pr-10 space-y-8 w-full">
           <Outlet />
         </main>
       </div>

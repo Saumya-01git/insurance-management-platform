@@ -13,6 +13,7 @@ import RecentActivity from "../../components/dashboard/Activity/RecentActivity";
 import NotificationPanel from "../../components/dashboard/NotificationPanel";
 import UpcomingRenewals from "../../components/dashboard/UpcomingRenewals";
 import LoadingSkeleton from "../../components/dashboard/LoadingSkeleton";
+import SectionDivider from "../../components/common/SectionDivider";
 
 // Services
 import { customerService } from "../../services/customerService";
@@ -20,7 +21,7 @@ import { policyService } from "../../services/policyService";
 import { claimService } from "../../services/claimService";
 import { paymentService } from "../../services/paymentService";
 import { formatCurrency } from "../../utils/policyHelpers";
-import { Users, Shield, FileText, DollarSign } from "lucide-react";
+import { Users, Shield, FileText, DollarSign, Activity, Zap, BarChart3, Clock, Layers } from "lucide-react";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -118,9 +119,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="animate-in fade-in duration-300 pb-10">
+    <div className="animate-in fade-in duration-300 pb-16">
       {/* Top Page Header */}
-      <div style={{ marginBottom: "28px" }}>
+      <div>
         <DashboardHeader
           title="Carrier Executive Dashboard"
           subtitle="Enterprise Insurance Carrier Metrics & Underwriting Analytics"
@@ -128,22 +129,46 @@ const Dashboard = () => {
       </div>
 
       {/* Welcome Banner */}
-      <div style={{ marginBottom: "28px" }}>
+      <div>
         <WelcomeCard />
       </div>
 
+      {/* Section Divider 1: Performance KPIs */}
+      <SectionDivider
+        title="Executive Performance Metrics"
+        subtitle="Key carrier indicators and gross premium volume"
+        badge="Real-time KPIs"
+        icon={Activity}
+      />
+
       {/* 4 Main KPI Stat Cards */}
-      <div style={{ marginBottom: "28px" }}>
+      <div>
         <StatsGrid statsData={liveStats} />
       </div>
 
+      {/* Section Divider 2: Operations & Quick Tools */}
+      <SectionDivider
+        title="Carrier Suite Operations"
+        subtitle="One-click workflows for policyholders and claims"
+        badge="Quick Tools"
+        icon={Zap}
+      />
+
       {/* Quick Action Tools Bar */}
-      <div style={{ marginBottom: "28px" }}>
+      <div>
         <QuickActions />
       </div>
 
+      {/* Section Divider 3: Financial & Underwriting Analytics */}
+      <SectionDivider
+        title="Financial & Underwriting Analytics"
+        subtitle="Revenue trends, loss claim ratios, and policy distributions"
+        badge="Analytics Engine"
+        icon={BarChart3}
+      />
+
       {/* Charts Grid - Section 1 (Revenue & Claims Breakdown) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
         <div className="lg:col-span-8">
           <RevenueChart paymentsList={payments} policiesList={policies} />
         </div>
@@ -153,7 +178,7 @@ const Dashboard = () => {
       </div>
 
       {/* Charts Grid - Section 2 (Policy Mix & Customer Acquisition) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-6">
           <PolicyChart policiesList={policies} />
         </div>
@@ -162,8 +187,16 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Section Divider 4: Customer & Claims Audit Records */}
+      <SectionDivider
+        title="Active Onboarding & Claims Registry"
+        subtitle="Recent policyholder contracts and underwriting submissions"
+        badge="Audit Stream"
+        icon={Layers}
+      />
+
       {/* Tables Section (Recent Customers & Recent Claims) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-6">
           <RecentCustomersTable />
         </div>
@@ -172,8 +205,16 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Section Divider 5: Intelligence & Operational Feed */}
+      <SectionDivider
+        title="Operational Intelligence & Renewals"
+        subtitle="Expiring policies, system notifications, and audit feed"
+        badge="System Health"
+        icon={Clock}
+      />
+
       {/* Bottom Operational Intelligence Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-7" style={{ marginBottom: "28px" }}>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-4">
           <UpcomingRenewals />
         </div>

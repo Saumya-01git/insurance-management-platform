@@ -25,23 +25,13 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Handle Unauthorized Errors without throwing user out during fallback sessions
+// Response Interceptor: Handle Unauthorized Errors gracefully without kicking user out
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Only redirect if explicit 401 Unauthorized from backend and not during login attempt
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !error.config?.url?.includes("/auth/login") &&
-      !error.config?.url?.includes("/auth/register")
-    ) {
-      const isAuthPage = window.location.pathname.startsWith("/login") || window.location.pathname.startsWith("/register");
-      if (!isAuthPage) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        window.location.href = "/login";
-      }
+    // Log authorization errors silently without forcing hard page reloads
+    if (error.response && error.response.status === 401) {
+      console.warn("API 401 Unauthorized Response - maintaining active UI session:", error.config?.url);
     }
     return Promise.reject(error);
   }
